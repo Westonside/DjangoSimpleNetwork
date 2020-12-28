@@ -1,0 +1,153 @@
+html{
+    min-height: 100%;
+}
+.body{
+    min-height: 100vh;
+
+}
+#new_post_but{
+    border:none;
+    background-color: white;
+    font-size: 40px;
+    margin-top:1.2em;
+    
+}
+#new_post_button:hover{
+    color:blue;
+    text-decoration: underline;
+}
+#new_post_but{
+    text-align: center;
+    /* border: dashed; */
+}
+.body{
+    height: 100%;
+}
+.row-no-margin{
+    width: 100vh;
+    margin-left: 0px;
+    margin-right: 0px;
+    padding:0;
+}
+#loaded_posts{
+    margin-top: 2em;
+    text-align: center;
+    border: ;
+    margin-left:15em;
+    margin-right: 15em;
+}
+#basic_profile{
+    height: 30vh;
+    border: dashed;
+    margin-top: 3em;
+    margin-left: 1.5em;
+}
+#trending{
+    margin-top: 3em;
+    border:dashed;
+}
+
+@keyframes appear {
+    0% {
+        opacity: 0;
+        /* height: 100%; */
+        /* line-height: 100%; */
+        padding: 0px;
+        margin-bottom: 0px;
+    }
+    100% {
+        opacity: 1;
+        /* height: 100%; */
+        /* line-height: 100%; */
+        padding: 20px;
+        margin-bottom: 10px;
+    }
+}
+#popup_post{
+    animation-name: appear;
+    animation-duration: .5s;
+    animation-fill-mode: forwards;
+    animation-play-state: paused;
+    position: fixed;
+    /* centers the pop up perfectly in the center of the page */
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border: 1px solid black;
+    border-radius: 10px;
+    /* give high z index cuz drawing over  */
+    z-index: 10;
+    background-color: white;
+    width: 500px;
+    max-width: 80%;
+    display: none;
+    opacity: 0;
+    
+}
+.title{
+    padding: 10px 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid black;
+    outline: none;
+}
+.title:active{
+    outline: none;
+}
+
+.close-button{
+    background-color: white;
+    border: none;
+}
+.post{
+    position: relative;    
+    border: 2px solid black;
+    height:10em;
+    background-color: gainsboro;
+}
+.like{
+    position: relative;
+}
+
+#like_area{
+    position: relative;
+    top: 2.9em;
+    left:4%;
+    height: 5em;
+}
+#btn{
+    padding-top: .2em;
+    /* height: 3em; */
+}
+.likes_num{
+    padding-left: .8em;
+    margin-bottom: 2em;
+}
+#user_profile{
+    margin-top: 3em;
+}
+#user_profile_view{
+    padding-left: 3em;
+}
+
+.col-1{
+    padding:0;
+}
+.edit_post{
+    padding-top: 0px;
+    border: none;
+    background-color:gainsboro;
+    margin-bottom: 3.4em;    
+}
+#username{
+    font-weight: bold;
+}
+#follow_button{
+    margin-left: 3em;
+    display: none;
+}
+
+.fas fa-heart{
+    color:red;
+}

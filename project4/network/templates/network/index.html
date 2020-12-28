@@ -1,0 +1,571 @@
+{% extends "network/layout.html" %}
+
+
+{% block body %}
+
+
+
+<div id="color-over">
+    <div id="user_profile">
+        <div id="user_profile_view">
+            <h2 id="user_title">{{request.user}}</h2>
+           <div class="row">
+               <div class = "col-2 col-md-2">
+                <p>Followers: <span id="followers_value"></span></p>
+            </div>
+            <div class = "col-2 col-md-2">
+                <p>Following: <span id ="following_value"></span></p>
+            </div>
+          
+           </div>
+        </div>
+        <button id="follow_button">Follow</button>
+    </div>
+    
+    <div id ="posts"/>
+
+    </div>
+
+    
+    
+
+    
+</div>    
+   
+<div id = "posts_following"/>
+    
+    
+    
+    <script type="text/babel">
+    //post template 
+    
+    
+    class App extends React.Component 
+    {
+        constructor(props){
+            super(props);
+            this.state = {
+                list: [],
+                body:'',
+                post:'',
+                likes: 0,
+                title: document.title,
+                counter:0,
+                quantity:11,
+                followers:0,
+                following:0,
+                likesList:[],
+                selectedPost:0,
+                test:0,
+                userEditable:[],
+                heart: "far",
+                editOne:0,
+                something:0,
+                // b: []
+            };
+            this.handleChange = this.handleChange.bind(this);
+            this.postPost = this.postPost.bind(this);
+            this.handleClicked = this.handleClicked.bind(this);
+            // this.componentDidMount = this.handleClicked.bind(this);
+        }
+        
+     
+       
+
+        makeData = (data) =>{
+            let tester = [];
+            console.log('making data');
+            let test = this.state.title;
+            let editList = [];
+            console.log('new data',data);
+            this.setState({list:data})
+            let { list } = this.state;
+            console.log("updated list", list);            
+        }
+        
+        async componentDidUpdate(prevProps,prevState){
+            // console.warn(prevProps);
+            
+            if(prevState.title != this.state.title || this.state.test)
+            {
+            // if in a different section of webpage
+            //change the set state from 0 
+            
+            const start = this.state.counter;
+            const end = start + this.state.quantity-1;
+            this.setState({counter:end+1});
+            // fetch(`getPost/${this.state.title}?start=${start}&end=${end}`)
+            // need to make a fetch to using the start and endpoints here
+
+            // if(this.state.title = document.querySelector('#username'))
+            fetch(`getPost/${this.state.title}`)
+            .then(response => response.json())
+            .then(this.makeData);
+            this.setState({counter:0});
+            
+            if(this.state.title==document.querySelector('#username').innerHTML)
+            {
+                console.log('logging the title info');
+                fetch(`/getUser/${document.querySelector('#username').innerHTML}`)
+                .then(response => response.json())
+                .then(result =>{
+                    this.setState({
+                        followers: result.followers,
+                        following: result.following
+                    })
+                });
+            }
+            this.setState({test:false});
+            }
+            console.log('likesList', this.state.likesList);
+            let { likesList } = this.state;
+            // console.log('id', likesList[0].id);
+            
+            
+            
+           
+            
+        }
+
+        //only triggers once in the lifetime so have to use componentdidupdate
+       async componentDidMount(){
+            
+            // check what the document title is and then make a fetch based off where the user is on the webstie
+            document.addEventListener('mousedown', this.handleClicked);
+
+
+             
+            
+            const start = this.state.counter;
+            const end = start + this.state.quantity-1;
+            this.setState({counter:end+1});
+            
+            fetch(`getPost/${this.state.title}`)
+            .then(response => response.json())
+            .then(this.makeData);
+
+       }
+       
+       //POSTS DO NOT SHOW AT THE TOP FOR SOME REASON
+        
+       handleClicked = (event) =>{
+           console.log('clickasdfadf');
+
+            this.setState({something:1})
+           
+           fetch(`/getUser/${document.querySelector('#user_title').innerHTML}`)
+            .then(response => response.json())
+            .then(result =>{
+                this.setState({
+                    followers: result.followers,
+                    following: result.following
+                })
+            });
+        //    alert(document.title);
+        // wait a brief moment to allow for vanilla js to make the change then react looks at the 
+            
+            
+            setTimeout(() => {console.log(document.title);
+            let { title } = this.state;
+           this.setState({title: document.title})},200);
+            let { test } = this.state;
+            
+            // componentDidMount();
+            // console.log(test);console.log(tester);
+            console.log("likes list",this.state.likesList);
+            
+
+
+            
+       }
+
+       
+
+        close_popUp = () =>{
+            console.log('close');
+            document.querySelector('#popup_post').style.display = 'none';
+            document.querySelector('#color-over').style.background ='white';
+            document.querySelector('.body').style.background = 'white';
+            // the button div 
+            document.querySelector('#new_post_but').style.background = 'white';
+            document.querySelector('#new_post_button').style.background = 'white';
+            
+        }
+        popUp = (event) => {
+                // console.log(event.target);
+                console.log(event.target.id, 'this is the class name currently');
+                // console.log(event.target.className, 'cock and ball torture', event.target.className===);
+                document.querySelector('#edit_create_title').innerHTML = 'Create a new post';
+                document.querySelector('#popup_post').style.display = 'block';
+                document.querySelector('#popup_post').style.animationFillMode ='forwards';
+                document.querySelector('#popup_post').style.animationPlayState ='running';
+                document.querySelector('#color-over').style.background ='gray';
+                document.querySelector('.body').style.background = 'gray';
+                // the button div 
+                document.querySelector('#new_post_but').style.background = 'gray';
+                document.querySelector('#new_post_button').style.background = 'gray';
+                // document.querySelector('#edit').style.display = 'none';
+                if(event.target.className != "new_post")
+                {
+                    console.log(event.target.parentElement.parentElement.parentElement.children[0].children[1].innerHTML);
+                    // console.log(event.parentElement.parentElement);
+                    // document.querySelector('#edit_create_title').innerHTML = 'Edit Post';
+                    // console.log(event.target.dataset.value, 'boobs');
+                    this.setState({
+                        body:event.target.parentElement.parentElement.parentElement.children[0].children[1].innerHTML,
+                        editOne: event.target.dataset.value
+                    });
+                    console.log('edit segment');
+                    document.querySelector('#submit').style.display = 'none';
+                    document.querySelector('#edit').style.display = 'block';
+                    // document.querySelector('')
+                    this.setState({selectedPost:event.target.id});
+                    // console.log('boobs', document.querySelector(`button[data-value="${event.target.id}"]`).parentElement.parentElement.parentElement.querySelector('p').innerHTML);
+                    console.log(this.state.selectedPost);
+                }
+                else{
+                    document.querySelector('#edit').style.display = 'none';
+                    document.querySelector('#submit').style.display = 'block';
+                }
+        }
+
+
+        heartClick = (event) =>{
+            console.log('click');
+            event.target.className = "fas fa-heart";
+            if(event.target.className === "fas fa-heart")
+            {
+                // event.target.style.color = 'red';
+                //update the like feature of a post'
+                fetch(`/likePost/${event.target.dataset.value}`)
+                .then(response => response.json())
+                .then(result =>{
+                    
+                    this.setState({
+                        test:result
+                    })
+                    console.log("result", result.success);
+                })
+            }
+
+            
+        }
+
+        handleChange(event){
+            //when the text value changes in the post the body is updated access the value attribute of the text area
+            this.setState({body: event.target.value});
+        }
+        
+        postPost(event){
+            // this.setState({body:})
+            
+            let { body } = this.state;
+            alert(body)
+            if(body.length > 0)
+            {
+                fetch("/post", {
+                    method: 'POST',
+                    body:JSON.stringify({
+                        body: `${body}`,
+                    })
+                })
+                .then(response => response.json())
+                .then(test =>{
+                    alert(test["body"]);
+                    this.setState({body:""})
+                    
+                });
+            }
+            // post the event to the posts route
+            // alert('submitted');
+            // event.preventDefault();
+        } 
+        userClick = (event) =>{
+
+
+            //THIS FUNCTION BROKE CLICKING ON THE USER ICON ON THE NAV BAR LOOK INTO FIXING THAT BIT
+            this.setState({counter:0});
+
+
+            const userSelected = event.target.dataset.user;
+            //change the follow button to follow or unfollow
+            fetch(`doesFollow/${userSelected}`)
+            .then(response => response.json())
+            .then(result =>{
+                if(result.follow_status){
+                    document.querySelector('#follow_button').innerHTML = 'Unfollow';
+                    console.error('you do follow');
+                }
+                else{
+                    document.querySelector('#follow_button').innerHTML = 'Follow';
+                    console.error('You do not follow');
+                }
+            });
+            //get the user value associated with the button 
+            
+            console.log(event.target.dataset.user);
+            document.title = userSelected;
+            document.querySelector('.container-fluid').style.display = 'none';
+            document.querySelector('#user_profile_view').style.display = 'block';
+            document.querySelector('#user_title').innerHTML = event.target.dataset.user;
+            if(document.querySelector('#username').innerHTML === event.target.dataset.user)
+            {
+                console.log('follw_button');
+                document.querySelector('#follow_button').style.display = 'none';
+            }
+            else{
+                document.querySelector('#follow_button').style.display = 'block'; 
+            }
+
+            
+
+            // document.querySelector('#follow_button').style.display = 'none';
+
+            
+            
+                        
+            fetch(`/getUser/${userSelected}`)
+            .then(response => response.json())
+            .then(result =>{
+                this.setState({
+                    followers: result.followers,
+                    following: result.following
+                })
+            });
+
+
+            // const start = this.state.counter;
+            // const end = start + this.state.quantity-1;
+            // this.setState({counter:end+1});
+
+            fetch(`/getPost/${userSelected}?start=${start}&end=${end}`)
+            .then(response =>response.json())
+            .then(result => {
+                this.setState({list:result})
+            });
+            
+        }
+        
+        loadMore = () =>{
+            console.warn('load more ');
+            //makes a fetch but since the start and end variables have not been used yet it gets the smae amount of information again
+            const start = this.state.counter;
+            const end = start + this.state.quantity-1;
+            this.setState({counter:end+1});
+            
+            // fetch(`getPost/${this.state.title}`)
+            fetch(`getPost/${this.state.title}?start=${start}&end=${end}`)
+            .then(response => response.json())
+            .then(this.makeData);
+            //use the current state counter value to make a fetch request with the incremented counter variable
+        }
+        
+
+
+        
+        submitEdit = (event) =>{
+            let { editOne } = this.state;
+            let { body } = this.state;
+            console.log(editOne);
+            
+            console.log('here',this.state.SelectedPost);
+            fetch(`editPost/${parseInt(editOne)}`, {
+                method: 'PUT',
+                body: JSON.stringify({
+                    editValue: body
+                })
+            })
+            .then(result=>{
+                console.log('edit submitted');
+                this.close_popUp;
+                this.setState({test:true, body:""})
+            
+            event.preventDefault();
+        }
+        
+        
+        
+        
+        render(){
+            // document.querySelector('#following').addEventListener('click', testing123());
+            //use a push state for each page and in the react dom check what the title of page is and then make a fetch request based off that value
+            // document.querySelector('#following').onClick = {this.personal};
+            
+            
+            
+            //for getting the user profile
+            document.querySelector('#following_value').innerHTML = this.state.following;
+            document.querySelector('#followers_value').innerHTML = this.state.followers;
+
+            //the follow buttons starts as hidden
+            
+            
+
+
+            const { list } = this.state;
+            let testing = 0;
+            let plz = 0;
+            //loop through the array and make a p value for each
+            const test = list.map(value => {
+                // need to get first then only and then load more
+                plz++;
+                console.log(plz);
+                if(value.canEdit && value.liked)
+                {
+                    return(
+                        <div className = "post">
+                            <div className="post_user">
+                                <button className="user_select" data-user={value.user} onClick={this.userClick}>{value.user} </button>
+                                <p> {value.body}</p>
+                            </div>
+
+                            <div className="like">
+                                <div className="row"id="like_area">
+                                    <i id="btn" className="fas fa-heart" data-value={value.id} onClick={this.heartClick}></i>
+                                    <span className="likes_num">{value.likes} </span>
+                                    <button className="edit_post" onClick = {this.popUp} data-value={value.id}>Edit</button>
+                                </div>
+
+                            </div>
+                        
+                        </div>
+                    )
+                }
+                if(value.canEdit)
+                {
+                    // console.log('the user can edit this bit');
+                    return(
+                    
+                    <div className = "post">
+                        
+                        <div className="post_user">
+                            <button className="user_select" data-user={value.user} onClick={this.userClick}>{value.user} </button>
+                            <p> {value.body} </p>
+                        </div>
+                        
+                        <div className="like">
+                            <div className="row"id="like_area">
+                                <i id="btn" className="far fa-heart" data-value={value.id} onClick={this.heartClick}></i>
+                                <span className="likes_num">{value.likes} </span>
+                                <button className="edit_post" onClick = {this.popUp} data-value={value.id}>Edit</button>
+                            </div>
+                            
+                        </div>
+                        
+                    </div>
+                    
+                )
+                    
+                } 
+                
+                else if(value.liked)
+                {
+                    return(
+                        <div className = "post">
+                            <div className="post_user">
+                                <button className="user_select" data-user={value.user} onClick={this.userClick}>{value.user} </button>
+                                <p> {value.body} </p>
+                            </div>
+
+                            <div className="like">
+                                <div className="row"id="like_area">
+                                    <i id="btn" className="fas fa-heart" data-value={value.id} onClick={this.heartClick}></i>
+                                    <span className="likes_num">{value.likes} </span>
+                                    
+                                </div>
+
+                            </div>
+                        
+                        </div>
+                    )
+                }
+                return(
+                    <div className = "post">
+                        <div className="post_user">
+                            <button className="user_select" data-user={value.user} onClick={this.userClick}>{value.user} </button>
+                            <p> {value.body}</p>
+                        </div>
+                        
+                        <div className="like">
+                            <div className="row"id="like_area" 
+                            >
+                                <i id="btn" className="far fa-heart" data-value={value.id} onClick={this.heartClick}></i>
+                                <span className="likes_num">{value.likes} </span>
+                                
+                            </div>
+                            
+                        </div>
+                        
+                    </div>
+                    
+                )
+            })
+            
+            return(
+                <div>
+                    <div className="container-fluid">
+                        <div className="row">
+                            <div id="basic_profile" className="col-md-3">
+                                 <p>Basic user features on the left side</p>
+                            </div>
+                        
+                            <div id="new_post_but" className="col-md-4">
+                            
+                                <button type="button" className="new_post" data-toggle="button" aria-pressed="false" autoComplete="off" id="new_post_button" onClick={this.popUp}>
+                                    New Post
+                                </button>
+                            </div>
+                            <div id="trending" className="col-md-4">
+                                <p>trending or something </p>
+                            </div>
+                        
+                        
+                        </div>
+                       
+                    </div>
+
+                    <div id="popup_post">
+                        <div className = "create_post_head">
+                            <div className="title">
+                            <p id="edit_create_title">Create a new post</p>
+            
+                                <button className="close-button" onClick={this.close_popUp}>&times;</button>
+                            </div>
+                        </div>
+                        <div className ="create_post_body">
+                            <form onSubmit={this.postPost} >
+                                <textarea className="form-control" id="exampleFormControlTextarea1" rows="3" placeholder ="Start Your Post" value={this.state.body} onChange ={this.handleChange}></textarea>
+                                <button type="submit" className="btn btn-primary mb-2" id="submit">Submit</button>
+                                
+                                </form>
+                            <form onSubmit={this.submitEdit}>
+                                <button className="btn btn-primary mb-2" id="edit">Submit Edit</button>
+                            </form>
+                        </div>
+                    </div>
+                    
+
+                    <div id="loaded_posts">
+                            {test}
+
+                        </div>
+                        <button id="more_posts" onClick={this.loadMore}>Next</button>
+                </div>
+                
+            );
+            
+                
+            
+            
+        }
+        
+    }
+    
+   
+        
+        
+        ReactDOM.render(<App />, document.querySelector("#posts"));
+        // ReactDOM.render(<Following />, document.querySelector('#posts_following'));
+        
+    </script>
+{% endblock %}
